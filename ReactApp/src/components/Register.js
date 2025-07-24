@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {
+  USER_REGISTER_REQUEST,
+  USER_REGISTER_SUCCESS,
+  USER_REGISTER_FAIL,
+} from '../redux/actions/userActions';
 
 // Predefined disease suggestions
 const diseaseList = [
@@ -21,16 +26,16 @@ const Register = () => {
     address: '',
     gender: '',
     medicalCertificate: null,
+    email: '',
+    password: '',
   });
 
   const [diseaseInput, setDiseaseInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedDiseases, setSelectedDiseases] = useState([]);
 
-  // Handle normal input changes
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-
     if (type === 'file') {
       setFormData({ ...formData, [name]: files[0] });
     } else {
@@ -38,15 +43,15 @@ const Register = () => {
     }
   };
 
-  // Disease input changes
   const handleDiseaseChange = (e) => {
     const value = e.target.value;
     setDiseaseInput(value);
 
     if (value.length > 0) {
       const filtered = diseaseList.filter(
-        (d) => d.toLowerCase().includes(value.toLowerCase()) &&
-        !selectedDiseases.includes(d)
+        (d) =>
+          d.toLowerCase().includes(value.toLowerCase()) &&
+          !selectedDiseases.includes(d)
       );
       setSuggestions(filtered);
     } else {
@@ -64,10 +69,9 @@ const Register = () => {
     setSelectedDiseases(selectedDiseases.filter((d) => d !== disease));
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch({ type: 'REGISTER_REQUEST' });
+    dispatch({ type: USER_REGISTER_REQUEST });
 
     try {
       const dataToSend = new FormData();
@@ -82,11 +86,19 @@ const Register = () => {
         },
       });
 
-      dispatch({ type: 'REGISTER_SUCCESS', payload: data });
+      dispatch({ type: USER_REGISTER_SUCCESS, payload: data });
+
+      // Optionally store token/user if returned
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+      }
+
       navigate('/');
     } catch (err) {
       dispatch({
-        type: 'REGISTER_FAIL',
+        type: USER_REGISTER_FAIL,
         payload: err.response?.data?.message || err.message,
       });
     }
@@ -96,6 +108,7 @@ const Register = () => {
     <div className="container mt-4 mb-5">
       <h2 className="text-primary">User Registration</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
+        {/* Input fields */}
         <div className="mb-3">
           <label>Name</label>
           <input className="form-control" name="name" required onChange={handleChange} />
@@ -122,6 +135,11 @@ const Register = () => {
         </div>
 
         <div className="mb-3">
+          <label>Password</label>
+          <input type="password" className="form-control" name="password" required onChange={handleChange} />
+        </div>
+
+        <div className="mb-3">
           <label>Address</label>
           <textarea className="form-control" name="address" rows="2" onChange={handleChange}></textarea>
         </div>
@@ -142,13 +160,14 @@ const Register = () => {
           </div>
         </div>
 
+        {/* Disease selection */}
         <div className="mb-3">
-          <label>Diseases (if any)</label>
+          <label>Medical Condition (if any)</label>
           <input
             className="form-control"
             value={diseaseInput}
             onChange={handleDiseaseChange}
-            placeholder="Start typing disease name..."
+            placeholder="Start typing ..."
           />
 
           {suggestions.length > 0 && (

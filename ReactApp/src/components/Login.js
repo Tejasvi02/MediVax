@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from '../redux/actions/userActions';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {
+  USER_LOGIN_REQUEST,
+  USER_LOGIN_SUCCESS,
+  USER_LOGIN_FAIL
+} from '../redux/actions/userActions';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(login(email, password));
+    dispatch({ type: USER_LOGIN_REQUEST });
+
+    try {
+      const { data } = await axios.post('/api/users/login', { email, password });
+
+      dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+
+      navigate('/home');
+    } catch (error) {
+      dispatch({
+        type: USER_LOGIN_FAIL,
+        payload: error.response?.data?.message || error.message,
+      });
+    }
   };
 
   return (

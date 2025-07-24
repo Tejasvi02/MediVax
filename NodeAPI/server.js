@@ -28,6 +28,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/users', userRoutes);
 
+app.get('/home', (req, res) => {
+  res.send('API is live!');
+});
+
+
 // Start server
 const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
