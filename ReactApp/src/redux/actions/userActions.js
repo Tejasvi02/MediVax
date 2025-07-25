@@ -1,5 +1,3 @@
-// userActions.js
-
 // Action Types
 export const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST';
 export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
