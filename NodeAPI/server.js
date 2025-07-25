@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
+const vaccineRoutes  = require('./routes/vaccineRoutes');
+const hospitalRoutes = require('./routes/hospitalRoutes');
 
 
 dotenv.config();
@@ -27,6 +29,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);
+
+app.use('/api/vaccines', vaccineRoutes);
+app.use('/api/hospitals', hospitalRoutes);
 
 app.get('/home', (req, res) => {
   res.send('API is live!');
