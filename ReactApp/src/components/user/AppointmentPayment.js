@@ -24,7 +24,7 @@ const AppointmentPayment = () => {
   const handlePay = async () => {
     try {
       const { data } = await axios.put(`/api/appointments/${id}/pay`);
-      alert(`Payment successful! Total cost: ₹${data.cost}`);
+      alert(`Payment successful! Total cost: $${data.cost}`);
       navigate('/user/upcoming');
     } catch (err) {
       console.error(err);

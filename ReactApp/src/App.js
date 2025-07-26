@@ -13,7 +13,7 @@ import VaccinatedList from './components/admin/VaccinatedList';
 import UpcomingAppointments from './components/user/UpcomingAppointments';
 import AppointmentPayment   from './components/user/AppointmentPayment';
 import UserAppointments from './components/user/UserAppointments';
-import UserSchedule from './components/user/UserSchedule';
+import UserHistory from './components/user/UserHistory';
 import RequestAppointment    from './components/user/RequestAppointment';
 
 
@@ -31,7 +31,7 @@ const App = () => (
           <Route path="/admin/approvals" element={<ApproverScreen />} />
           <Route path="/admin/vaccinated-list" element={<VaccinatedList />} />
           <Route path="/user/appointments" element={<UserAppointments />} />
-          <Route path="/user/schedule" element={<UserSchedule />} />
+          <Route path="/user/schedule" element={<UserHistory />} />
           <Route path="/user/request" element={<RequestAppointment />} />
           <Route path="/user/upcoming"               element={<UpcomingAppointments />} />
           <Route path="/user/appointments/:id/pay"   element={<AppointmentPayment />} />

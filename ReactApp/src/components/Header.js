@@ -42,9 +42,6 @@ const Header = () => {
             {user && user.role === 'user' && (
               <>  
                 <li className="nav-item">
-                  <Link className="nav-link" to="/user/hospitals">Find Hospitals</Link>
-                </li>
-                <li className="nav-item">
                   <Link className="nav-link" to="/user/appointments">Appointments</Link>
                 </li>
                 <li className="nav-item">

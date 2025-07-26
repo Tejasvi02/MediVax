@@ -6,17 +6,22 @@ const UpcomingAppointments = () => {
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await axios.get('/api/appointments/mine');
-      setAppointments(data);
+    const fetchAppointments = async () => {
+      try {
+        const { data } = await axios.get('/api/appointments/mine');
+        setAppointments(data);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
     };
-    fetch().catch(console.error);
+    fetchAppointments();
   }, []);
 
-  const today = new Date().setHours(0,0,0,0);
-  const upcoming = appointments.filter(a => {
-    const d = new Date(a.appointmentDate).setHours(0,0,0,0);
-    return d >= today;
+  const today = new Date().setHours(0, 0, 0, 0);
+  const upcoming = appointments.filter((a) => {
+    if (a.rejected) return false;
+    const apptDay = new Date(a.appointmentDate).setHours(0, 0, 0, 0);
+    return apptDay >= today;
   });
 
   return (
@@ -31,31 +36,41 @@ const UpcomingAppointments = () => {
               <th>Date</th>
               <th>Hospital</th>
               <th>Vaccine</th>
-              <th>Approved?</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {upcoming.map(a => (
-              <tr key={a._id}>
-                <td>{new Date(a.appointmentDate).toLocaleDateString()}</td>
-                <td>{a.hospital.name}</td>
-                <td>{a.vaccine.name}</td>
-                <td>{a.approved ? 'Yes' : 'No'}</td>
-                <td>
-                  {!a.approved && <span className="text-muted">—</span>}
-                  {a.approved && !a.paid && (
-                    <Link
-                      to={`/user/appointments/${a._id}/pay`}
-                      className="btn btn-sm btn-success"
-                    >
-                      Pay
-                    </Link>
-                  )}
-                  {a.paid && <span className="text-success">Confirmed</span>}
-                </td>
-              </tr>
-            ))}
+            {upcoming.map((a) => {
+              let status;
+              let action = null;
+
+              if (a.paid) {
+                status = 'Confirmed';
+              } else if (a.approved) {
+                status = 'Approved';
+                action = (
+                  <Link
+                    to={`/user/appointments/${a._id}/pay`}
+                    className="btn btn-sm btn-success"
+                  >
+                    Pay
+                  </Link>
+                );
+              } else {
+                status = 'Pending';
+              }
+
+              return (
+                <tr key={a._id}>
+                  <td>{new Date(a.appointmentDate).toLocaleDateString()}</td>
+                  <td>{a.hospital.name}</td>
+                  <td>{a.vaccine.name}</td>
+                  <td>{status}</td>
+                  <td>{action || <span className="text-muted">—</span>}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

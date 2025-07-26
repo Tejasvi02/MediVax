@@ -63,7 +63,7 @@ exports.getAppointmentById = async (req, res) => {
 exports.getPendingAppointments = async (req, res) => {
   try {
     const list = await Appointment
-      .find({ approved: false })
+      .find({ approved: false,  rejected: false })
       .populate('user', 'name email')
       .populate('hospital')
       .populate('vaccine')
@@ -92,7 +92,9 @@ exports.rejectAppointment = async (req, res) => {
   try {
     const appt = await Appointment.findById(req.params.id);
     if (!appt) return res.status(404).json({ message: 'Not found' });
-    await Appointment.findByIdAndDelete(req.params.id);
+    //await Appointment.findByIdAndDelete(req.params.id); - if we want to delete the appoitment after rejection
+    appt.rejected = true;
+    await appt.save();
     res.json({ message: 'Rejected' });
   } catch (err) {
     res.status(500).json({ message: err.message });

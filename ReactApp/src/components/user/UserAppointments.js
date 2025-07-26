@@ -5,11 +5,15 @@ const UserAppointments = () => {
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await axios.get('/api/appointments/mine');
-      setAppointments(data);
+    const fetchAppointments = async () => {
+      try {
+        const { data } = await axios.get('/api/appointments/mine');
+        setAppointments(data);
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
     };
-    fetch().catch(console.error);
+    fetchAppointments();
   }, []);
 
   return (
@@ -24,16 +28,26 @@ const UserAppointments = () => {
               <th>Hospital</th>
               <th>Vaccine</th>
               <th>Date</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {appointments.map(a => (
-              <tr key={a._id}>
-                <td>{a.hospital.name}</td>
-                <td>{a.vaccine.name}</td>
-                <td>{new Date(a.appointmentDate).toLocaleDateString()}</td>
-              </tr>
-            ))}
+            {appointments.map((a) => {
+              let status;
+              if (a.rejected)      status = 'Rejected';
+              else if (a.paid)     status = 'Confirmed';
+              else if (a.approved) status = 'Approved';
+              else                  status = 'Pending Approval';
+
+              return (
+                <tr key={a._id} className={a.rejected ? 'table-danger' : ''}>
+                  <td>{a.hospital.name}</td>
+                  <td>{a.vaccine.name}</td>
+                  <td>{new Date(a.appointmentDate).toLocaleDateString()}</td>
+                  <td>{status}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

@@ -72,7 +72,7 @@ const RequestAppointment = () => {
             <option value="">— Select Hospital —</option>
             {hospitals.map(h => (
               <option key={h._id} value={h._id}>
-                {h.name} ({h.type}) — ₹{h.charges}
+                {h.name} ({h.type}) — ${h.charges}
               </option>
             ))}
           </select>
@@ -91,7 +91,7 @@ const RequestAppointment = () => {
             <option value="">— Select Vaccine —</option>
             {vaccines.map(v => (
               <option key={v._id} value={v._id}>
-                {v.name} — ₹{v.price}
+                {v.name} — ${v.price}
               </option>
             ))}
           </select>
