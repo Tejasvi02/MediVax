@@ -15,7 +15,12 @@ import AppointmentPayment   from './components/user/AppointmentPayment';
 import UserAppointments from './components/user/UserAppointments';
 import UserHistory from './components/user/UserHistory';
 import RequestAppointment    from './components/user/RequestAppointment';
+import axios from 'axios';
 
+const token = localStorage.getItem('token');
+if (token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
 const App = () => (
   <Router>
