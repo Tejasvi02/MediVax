@@ -9,9 +9,12 @@ import RegisterVaccine from './components/admin/RegisterVaccine';
 import HospitalList from './components/admin/HospitalList';
 import ApproverScreen from './components/admin/ApproverScreen';
 import VaccinatedList from './components/admin/VaccinatedList';
-import UserHospitals from './components/user/UserHospitals';
+//import UserHospitals from './components/user/UserHospitals';
+import UpcomingAppointments from './components/user/UpcomingAppointments';
+import AppointmentPayment   from './components/user/AppointmentPayment';
 import UserAppointments from './components/user/UserAppointments';
 import UserSchedule from './components/user/UserSchedule';
+import RequestAppointment    from './components/user/RequestAppointment';
 
 
 const App = () => (
@@ -27,9 +30,11 @@ const App = () => (
           <Route path="/admin/hospitals" element={<HospitalList />} />
           <Route path="/admin/approvals" element={<ApproverScreen />} />
           <Route path="/admin/vaccinated-list" element={<VaccinatedList />} />
-          <Route path="/user/hospitals" element={<UserHospitals />} />
           <Route path="/user/appointments" element={<UserAppointments />} />
           <Route path="/user/schedule" element={<UserSchedule />} />
+          <Route path="/user/request" element={<RequestAppointment />} />
+          <Route path="/user/upcoming"               element={<UpcomingAppointments />} />
+          <Route path="/user/appointments/:id/pay"   element={<AppointmentPayment />} />
         </Routes>
       </main>
       <Footer />

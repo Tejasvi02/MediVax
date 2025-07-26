@@ -50,6 +50,12 @@ const Header = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/user/schedule">My Schedule</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/user/request">Request Appointment</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/user/upcoming">Upcoming Appointments</Link>
+                </li>
               </>
             )}
           </ul>

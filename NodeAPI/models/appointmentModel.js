@@ -20,10 +20,18 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  approved: {
+    type: Boolean,
+    default: false
+  },
   paid: {
     type: Boolean,
     default: false
+  },
+  cost: {
+    type: Number
   }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);
+

@@ -2,18 +2,37 @@ const express = require('express');
 const auth    = require('../middleware/authMiddleware');
 const {
   createAppointment,
-  getUserAppointments
+  getUserAppointments,
+  getAppointmentById,
+  getPendingAppointments,
+  approveAppointment,
+  rejectAppointment,
+  payAppointment
 } = require('../controllers/appointmentController');
 
 const router = express.Router();
-
-// all routes require login
 router.use(auth);
 
-// POST /api/appointments/    → create new
-router.post('/', createAppointment);
+// ADMIN STATIC ROUTES — must come before any '/:id' routes:
+const adminGuard = (req, res, next) => {
+  if (req.user.role !== 'admin')
+    return res.status(403).json({ message: 'Forbidden' });
+  next();
+};
 
-// GET  /api/appointments/mine → list this user’s
-router.get('/mine', getUserAppointments);
+// list all pending requests
+router.get('/pending',    adminGuard, getPendingAppointments);
+// approve one
+router.put('/:id/approve', adminGuard, approveAppointment);
+// reject one
+router.put('/:id/reject',  adminGuard, rejectAppointment);
+
+// USER ROUTES
+router.post('/',            createAppointment);
+router.get('/mine',         getUserAppointments);
+
+// now the dynamic '/:id' can safely match real IDs:
+router.get('/:id',          getAppointmentById);
+router.put('/:id/pay',      payAppointment);
 
 module.exports = router;
