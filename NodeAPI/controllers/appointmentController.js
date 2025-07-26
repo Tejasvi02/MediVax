@@ -1,6 +1,7 @@
 const Appointment = require('../models/appointmentModel');
 const Vaccine     = require('../models/vaccineModel');
 const Hospital    = require('../models/hospitalModel');
+const User        = require('../models/userModel');
 
 // 1. User requests appointment (no pay, no approve)
 exports.createAppointment = async (req, res) => {
@@ -121,6 +122,21 @@ exports.payAppointment = async (req, res) => {
     await appt.save();
     res.json(appt);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getVaccinatedAppointments = async (req, res) => {
+  try {
+    const list = await Appointment
+      .find({ paid: true, rejected: false })
+      .populate('user', 'name email')
+      .populate('hospital', 'name')
+      .populate('vaccine', 'name')
+      .sort({ appointmentDate: -1 });
+    res.json(list);
+  } catch (err) {
+    console.error('getVaccinatedAppointments error:', err);
     res.status(500).json({ message: err.message });
   }
 };
