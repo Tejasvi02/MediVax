@@ -128,15 +128,98 @@ exports.payAppointment = async (req, res) => {
 
 exports.getVaccinatedAppointments = async (req, res) => {
   try {
-    const list = await Appointment
-      .find({ paid: true, rejected: false })
-      .populate('user', 'name email')
-      .populate('hospital', 'name')
-      .populate('vaccine', 'name')
-      .sort({ appointmentDate: -1 });
-    res.json(list);
+    // aggregate on paid, non-rejected appointments
+    const agg = await Appointment.aggregate([
+      { $match: { paid: true, rejected: false } },
+      {
+        $group: {
+          _id: {
+            user: '$user',
+            vaccine: '$vaccine',
+            hospital: '$hospital'
+          },
+          dosageCount: { $sum: 1 }
+        }
+      },
+      // lookup user
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id.user',
+          foreignField: '_id',
+          as: 'userDoc'
+        }
+      },
+      { $unwind: '$userDoc' },
+      // lookup vaccine
+      {
+        $lookup: {
+          from: 'vaccines',
+          localField: '_id.vaccine',
+          foreignField: '_id',
+          as: 'vaccineDoc'
+        }
+      },
+      { $unwind: '$vaccineDoc' },
+      // lookup hospital
+      {
+        $lookup: {
+          from: 'hospitals',
+          localField: '_id.hospital',
+          foreignField: '_id',
+          as: 'hospitalDoc'
+        }
+      },
+      { $unwind: '$hospitalDoc' },
+      // project the shape
+      {
+        $project: {
+          _id: 0,
+          user: {
+            _id: '$userDoc._id',
+            name: '$userDoc.name',
+            email: '$userDoc.email'
+          },
+          vaccine: {
+            _id: '$vaccineDoc._id',
+            name: '$vaccineDoc.name'
+          },
+          hospital: {
+            _id: '$hospitalDoc._id',
+            name: '$hospitalDoc.name'
+          },
+          dosageCount: 1
+        }
+      }
+    ]);
+
+    res.json(agg);
   } catch (err) {
     console.error('getVaccinatedAppointments error:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// User: get count of bookings per vaccine
+exports.getUserDoseCounts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Aggregate appointments by vaccine
+    const counts = await Appointment.aggregate([
+      { $match: { user: userId } },
+      { $group: { _id: '$vaccine', count: { $sum: 1 } } }
+    ]);
+
+    // Format response as array of { vaccineId, count }
+    const result = counts.map(c => ({
+      vaccineId: c._id.toString(),
+      count: c.count
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error('getUserDoseCounts error:', err);
     res.status(500).json({ message: err.message });
   }
 };

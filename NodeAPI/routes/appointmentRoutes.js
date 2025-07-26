@@ -8,7 +8,8 @@ const {
   approveAppointment,
   rejectAppointment,
   payAppointment,
-  getVaccinatedAppointments
+  getVaccinatedAppointments,
+  getUserDoseCounts
 } = require('../controllers/appointmentController');
 
 const router = express.Router();
@@ -24,6 +25,7 @@ const adminGuard = (req, res, next) => {
 // ——— Admin static routes ———
 router.get('/pending',    adminGuard, getPendingAppointments);
 router.get('/vaccinated', adminGuard, getVaccinatedAppointments);
+router.get('/dosages', getUserDoseCounts);
 router.put('/:id/approve', adminGuard, approveAppointment);
 router.put('/:id/reject',  adminGuard, rejectAppointment);
 

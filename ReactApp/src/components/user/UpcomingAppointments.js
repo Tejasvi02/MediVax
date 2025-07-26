@@ -17,16 +17,19 @@ const UpcomingAppointments = () => {
     fetchAppointments();
   }, []);
 
-  const today = new Date().setHours(0, 0, 0, 0);
+  // Midnight today for comparison
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+
+  // Only future (>= today), non-rejected appointments
   const upcoming = appointments.filter((a) => {
-    if (a.rejected) return false;
-    const apptDay = new Date(a.appointmentDate).setHours(0, 0, 0, 0);
-    return apptDay >= today;
+    const apptMs = new Date(a.appointmentDate).setHours(0, 0, 0, 0);
+    return !a.rejected && apptMs >= todayMs;
   });
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Upcoming Appointments</h2>
+
       {upcoming.length === 0 ? (
         <p>No upcoming appointments.</p>
       ) : (
@@ -58,7 +61,7 @@ const UpcomingAppointments = () => {
                   </Link>
                 );
               } else {
-                status = 'Pending';
+                status = 'Pending Approval';
               }
 
               return (

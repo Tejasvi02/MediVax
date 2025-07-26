@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const RequestAppointment = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -10,48 +10,49 @@ const RequestAppointment = () => {
     vaccineId: '',
     appointmentDate: ''
   });
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // 1) Grab the lists
   useEffect(() => {
+    // if a vaccineId query param is present, prefill it
+    const preVaccine = searchParams.get('vaccineId');
+    if (preVaccine) {
+      setForm((f) => ({ ...f, vaccineId: preVaccine }));
+    }
+
+    // fetch lists
     const fetchLists = async () => {
       try {
         const [hRes, vRes] = await Promise.all([
           axios.get('/api/hospitals'),
           axios.get('/api/vaccines')
         ]);
-        console.log('Hospitals:', hRes.data);
-        console.log('Vaccines:', vRes.data);
         setHospitals(hRes.data);
         setVaccines(vRes.data);
-      } catch (err) {
-        console.error('Fetch lists failed:', err.response?.data || err.message);
-        alert('Could not load hospitals/vaccines. Check console.');
+      } catch (error) {
+        console.error('Error loading lists:', error);
+        alert('Could not load hospitals or vaccines.');
       }
     };
     fetchLists();
-  }, []);
+  }, [searchParams]);
 
-  // 2) Handle field changes
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
   };
 
-  // 3) Submit the request
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // basic validation
     if (!form.hospitalId || !form.vaccineId || !form.appointmentDate) {
       return alert('All fields are required');
     }
-
     try {
-      console.log('Requesting appointment:', form);
       await axios.post('/api/appointments', form);
       navigate('/user/upcoming');
-    } catch (err) {
-      console.error('Request failed:', err.response || err.message);
-      alert(err.response?.data?.message || 'Request failed');
+    } catch (error) {
+      console.error('Request failed:', error.response || error.message);
+      alert(error.response?.data?.message || 'Request failed');
     }
   };
 
@@ -59,7 +60,6 @@ const RequestAppointment = () => {
     <div className="container mt-4">
       <h2>Request Appointment</h2>
       <form onSubmit={handleSubmit}>
-        {/* Hospital selector */}
         <div className="mb-3">
           <label className="form-label">Hospital</label>
           <select
@@ -70,7 +70,7 @@ const RequestAppointment = () => {
             required
           >
             <option value="">— Select Hospital —</option>
-            {hospitals.map(h => (
+            {hospitals.map((h) => (
               <option key={h._id} value={h._id}>
                 {h.name} ({h.type}) — ${h.charges}
               </option>
@@ -78,7 +78,6 @@ const RequestAppointment = () => {
           </select>
         </div>
 
-        {/* Vaccine selector */}
         <div className="mb-3">
           <label className="form-label">Vaccine</label>
           <select
@@ -89,7 +88,7 @@ const RequestAppointment = () => {
             required
           >
             <option value="">— Select Vaccine —</option>
-            {vaccines.map(v => (
+            {vaccines.map((v) => (
               <option key={v._id} value={v._id}>
                 {v.name} — ${v.price}
               </option>
@@ -97,7 +96,6 @@ const RequestAppointment = () => {
           </select>
         </div>
 
-        {/* Date picker */}
         <div className="mb-3">
           <label className="form-label">Appointment Date</label>
           <input

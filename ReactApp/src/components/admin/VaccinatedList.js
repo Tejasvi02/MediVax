@@ -10,7 +10,10 @@ const VaccinatedList = () => {
         const { data } = await axios.get('/api/appointments/vaccinated');
         setRecords(data);
       } catch (err) {
-        console.error('Error fetching vaccinated records:', err.response?.data || err.message);
+        console.error(
+          'Error fetching vaccinated records:',
+          err.response?.data || err.message
+        );
       }
     };
     fetchRecords();
@@ -28,16 +31,16 @@ const VaccinatedList = () => {
               <th>User</th>
               <th>Vaccine</th>
               <th>Hospital</th>
-              <th>Date</th>
+              <th>Doses</th>
             </tr>
           </thead>
           <tbody>
-            {records.map((r) => (
-              <tr key={r._id}>
-                <td>{r.user.name}</td>
+            {records.map((r, idx) => (
+              <tr key={idx}>
+                <td>{r.user.name} ({r.user.email})</td>
                 <td>{r.vaccine.name}</td>
                 <td>{r.hospital.name}</td>
-                <td>{new Date(r.appointmentDate).toLocaleDateString()}</td>
+                <td>{r.dosageCount}</td>
               </tr>
             ))}
           </tbody>
@@ -48,4 +51,3 @@ const VaccinatedList = () => {
 };
 
 export default VaccinatedList;
-
