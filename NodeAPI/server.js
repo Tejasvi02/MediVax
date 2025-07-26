@@ -7,7 +7,7 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const vaccineRoutes  = require('./routes/vaccineRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
-
+const appointmentRoutes = require('./routes/appointmentRoutes');
 
 dotenv.config();
 connectDB();
@@ -29,7 +29,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);
-
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api/vaccines', vaccineRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 

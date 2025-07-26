@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('../middleware/authMiddleware');
+const auth    = require('../middleware/authMiddleware');
 const {
   createVaccine,
   getVaccines,
@@ -9,19 +9,23 @@ const {
 
 const router = express.Router();
 
-// All admin‐only
-router.use(auth, (req, res, next) => {
-  if (req.user.role !== 'admin')
-    return res.status(403).json({ message: 'Forbidden' });
+// Public (authenticated) read
+router.get('/', auth, getVaccines);
+
+// Admin‐only mutate
+router.post('/', auth, (req,res,next) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ message:'Forbidden' });
   next();
-});
+}, createVaccine);
 
-router.route('/')
-  .post(createVaccine)
-  .get(getVaccines);
+router.put('/:id', auth, (req,res,next) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ message:'Forbidden' });
+  next();
+}, updateVaccine);
 
-router.route('/:id')
-  .put(updateVaccine)
-  .delete(deleteVaccine);
+router.delete('/:id', auth, (req,res,next) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ message:'Forbidden' });
+  next();
+}, deleteVaccine);
 
 module.exports = router;

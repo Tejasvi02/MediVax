@@ -13,6 +13,7 @@ import UserHospitals from './components/user/UserHospitals';
 import UserAppointments from './components/user/UserAppointments';
 import UserSchedule from './components/user/UserSchedule';
 
+
 const App = () => (
   <Router>
     <div className="d-flex flex-column min-vh-100">
