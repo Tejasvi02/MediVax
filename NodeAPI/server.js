@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const vaccineRoutes  = require('./routes/vaccineRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 dotenv.config();
 connectDB();
@@ -32,6 +33,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/vaccines', vaccineRoutes);
 app.use('/api/hospitals', hospitalRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.get('/home', (req, res) => {
   res.send('API is live!');

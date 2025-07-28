@@ -36,6 +36,9 @@ const Header = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/admin/vaccinated-list">Vaccinated List</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/admin/reports">Reports</Link>
+                </li>
               </>
             )}
 

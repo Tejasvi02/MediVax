@@ -9,12 +9,12 @@ import RegisterVaccine from './components/admin/RegisterVaccine';
 import HospitalList from './components/admin/HospitalList';
 import ApproverScreen from './components/admin/ApproverScreen';
 import VaccinatedList from './components/admin/VaccinatedList';
-//import UserHospitals from './components/user/UserHospitals';
 import UpcomingAppointments from './components/user/UpcomingAppointments';
 import AppointmentPayment   from './components/user/AppointmentPayment';
 import UserAppointments from './components/user/UserAppointments';
 import UserHistory from './components/user/UserHistory';
 import RequestAppointment    from './components/user/RequestAppointment';
+import Reports from './components/admin/Reports';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -40,6 +40,7 @@ const App = () => (
           <Route path="/user/request" element={<RequestAppointment />} />
           <Route path="/user/upcoming"               element={<UpcomingAppointments />} />
           <Route path="/user/appointments/:id/pay"   element={<AppointmentPayment />} />
+          <Route path="/admin/reports" element={<Reports />} />
         </Routes>
       </main>
       <Footer />
