@@ -208,3 +208,61 @@ exports.getMonthlyGender = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getSummary = async (req, res) => {
+  try {
+    // 1. total users
+    const totalUsers = await User.countDocuments();
+
+    // 2. users covered (at least one appointment)
+    const coveredUserIds = await Appointment.distinct('user');
+    const coveredCount   = coveredUserIds.length;
+    const coveragePercent = totalUsers
+      ? Math.round((coveredCount / totalUsers) * 100)
+      : 0;
+
+    // 3. age distribution for covered users
+    //    load those users’ ages
+    const coveredUsers = await User.find({ _id: { $in: coveredUserIds } }, 'age');
+    const buckets = { '0–18':0, '19–35':0, '36–60':0, '61+':0 };
+    coveredUsers.forEach(u => {
+      const a = u.age;
+      if (a <= 18)         buckets['0–18']++;
+      else if (a <= 35)    buckets['19–35']++;
+      else if (a <= 60)    buckets['36–60']++;
+      else                 buckets['61+']++;
+    });
+    const ageDistribution = Object.entries(buckets).map(([group, count]) => ({
+      group,
+      percent: totalUsers ? Math.round((count / coveredCount) * 100) : 0
+    }));
+
+    // 4. gender distribution for covered users
+    const genderCounts = { Male:0, Female:0, Other:0 };
+    const coveredUsersWithGender = await User.find(
+      { _id: { $in: coveredUserIds } },
+      'gender'
+    );
+    coveredUsersWithGender.forEach(u => {
+      const g = u.gender || 'Other';
+      genderCounts[g] = (genderCounts[g] || 0) + 1;
+    });
+    const genderDistribution = Object.entries(genderCounts).map(
+      ([gender, count]) => ({
+        gender,
+        percent: coveredCount ? Math.round((count / coveredCount) * 100) : 0
+      })
+    );
+
+    return res.json({
+      totalUsers,
+      coveredCount,
+      coveragePercent,
+      ageDistribution,
+      genderDistribution
+    });
+  } catch (error) {
+    console.error('Summary error:', error);
+    return res.status(500).json({ message: 'Failed to compute summary' });
+  }
+};

@@ -2,6 +2,7 @@
 
 const express = require('express');
 const auth    = require('../middleware/authMiddleware');
+const { getSummary } = require('../controllers/reportController');
 const {
   getAgeReport,
   getGenderReport,
@@ -40,5 +41,7 @@ router.get('/monthly-trend', adminGuard, getMonthlyTrend);
 router.get('/vaccine-distribution', adminGuard, getVaccineDistribution);
 // monthly gender grouped bar
 router.get('/monthly-gender', adminGuard, getMonthlyGender);
+
+router.get('/summary', auth, getSummary);
 
 module.exports = router;

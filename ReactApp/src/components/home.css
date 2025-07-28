@@ -1,0 +1,88 @@
+/* Home.css */
+
+/* ——— Hero banner (no image) ——— */
+.hero-banner {
+  height: 240px;
+  /* background-image: url('/banner.png');  <-- removed */
+  background-color: #0a5032;       /* fallback solid color */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner .hero-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+/* ——— Stat cards ——— */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+/* Home.css */
+
+/* ——— WatchList carousel ——— */
+.watch-carousel {
+  margin-bottom: 2rem;
+  height: 240px;             /* fixed overall height */
+  overflow: hidden;          /* hide any overflow */
+  position: relative;
+}
+
+.watch-carousel .carousel-inner {
+  height: 100%;              /* fill the container */
+}
+
+.watch-carousel .carousel-item {
+  height: 100%;              /* fill .carousel-inner */
+  display: flex !important;  /* center content */
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Slide background colors */
+.watch-carousel .carousel-item.bg-primary {
+  background-color: #0d6efd !important;
+}
+.watch-carousel .carousel-item.bg-success {
+  background-color: #198754 !important;
+}
+.watch-carousel .carousel-item.bg-info {
+  background-color: #0dcaf0 !important;
+}
+
+/* Remove arrows */
+.watch-carousel .carousel-control-prev,
+.watch-carousel .carousel-control-next {
+  display: none !important;
+}
+
+/* Bring indicators up a bit */
+.watch-carousel .carousel-indicators {
+  bottom: 5px;
+}
