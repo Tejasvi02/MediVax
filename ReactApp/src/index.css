@@ -1,0 +1,79 @@
+/* ——— Global Gradient Background ——— */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+  color: #333;
+}
+
+/* ——— Header Styling ——— */
+.navbar-custom {
+  background-color: #006064;       /* deep teal */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #e0f7fa !important;       /* light cyan */
+  font-weight: 500;
+}
+.navbar-custom .nav-link:hover {
+  color: #ffffff !important;
+}
+
+/* ——— Cards & Containers ——— */
+.card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: #ffffffcc;     /* slight translucency */
+}
+
+/* ——— Buttons ——— */
+.btn-primary {
+  background-color: #006064;
+  border-color: #006064;
+  transition: background-color .2s;
+}
+.btn-primary:hover {
+  background-color: #004d40;
+  border-color: #004d40;
+}
+
+/* ——— Form Controls ——— */
+.form-control {
+  border-radius: 0.5rem;
+  border: 1px solid #ced4da;
+  transition: box-shadow .2s, border-color .2s;
+}
+.form-control:focus {
+  border-color: #006064;
+  box-shadow: 0 0 0 0.2rem rgba(0, 96, 100, 0.25);
+}
+
+/* ——— Carousel (WatchList) ——— */
+.watch-carousel {
+  margin-bottom: 2rem;
+}
+.watch-carousel .carousel-item {
+  height: 240px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+.watch-carousel .carousel-indicators {
+  bottom: -10px;
+}
+.watch-carousel .carousel-control-prev,
+.watch-carousel .carousel-control-next {
+  display: none !important;
+}
+
+/* ——— Utility refinements ——— */
+.container {
+  max-width: 960px;
+}
+h2, h3, h4, h5 {
+  color: #004d40;
+}
