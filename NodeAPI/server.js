@@ -9,6 +9,8 @@ const vaccineRoutes  = require('./routes/vaccineRoutes');
 const hospitalRoutes = require('./routes/hospitalRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+require('dotenv').config();
+
 
 dotenv.config();
 connectDB();

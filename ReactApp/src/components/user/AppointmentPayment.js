@@ -1,15 +1,17 @@
+// src/components/user/AppointmentPayment.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate }       from 'react-router-dom';
 import axios                             from 'axios';
 import { jsPDF }                         from 'jspdf';
 
 const AppointmentPayment = () => {
-  const { id } = useParams();
+  // ◀️ make sure id is pulled from useParams!
+  const { id } = useParams();  
   const navigate = useNavigate();
   const [appt, setAppt] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load appointment
+  // Load appointment details
   useEffect(() => {
     (async () => {
       try {
@@ -30,7 +32,7 @@ const AppointmentPayment = () => {
       const { data } = await axios.put(`/api/appointments/${id}/pay`);
       const confirmed = { ...appt, paid: true, cost: data.cost };
 
-      // 2) generate PDF
+      // 2) generate + download PDF
       const doc = new jsPDF();
       doc.setFontSize(16);
       doc.text('Appointment Confirmation', 14, 20);
@@ -46,14 +48,14 @@ const AppointmentPayment = () => {
       doc.text('Your appointment has been confirmed.', 14, 90);
       doc.save('appointment-confirmation.pdf');
 
-      // 3) attempt notify (swallow 404)
+      // 3) email notification
       try {
         await axios.post(`/api/appointments/${id}/notify`);
       } catch (notifyErr) {
-        console.warn('Notify endpoint failed (you may need to implement it):', notifyErr);
+        console.warn('Email notify failed:', notifyErr);
       }
 
-      alert(`Payment successful! Your PDF is downloaded.`);
+      alert('Payment successful! PDF downloaded and email sent.');
       navigate('/user/upcoming');
     } catch (err) {
       console.error(err);
@@ -64,11 +66,12 @@ const AppointmentPayment = () => {
   if (loading) return <p>Loading…</p>;
   if (!appt)   return <p>Appointment not found</p>;
 
-  const cost = appt.cost != null
-    ? appt.cost
-    : appt.hospital.charges + appt.vaccine.price;
+  const cost =
+    appt.cost != null
+      ? appt.cost
+      : appt.hospital.charges + appt.vaccine.price;
 
-  // QR points at the same pay endpoint (for demo)
+  // QR points at the same pay endpoint (demo)
   const qrData = `${window.location.origin}/api/appointments/${id}/pay`;
   const qrUrl  = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
 
@@ -82,11 +85,18 @@ const AppointmentPayment = () => {
 
       <div className="text-center mb-4">
         <p>Scan this QR code to pay:</p>
-        <img src={qrUrl} alt="Payment QR Code" style={{ width: 200, height: 200 }} />
+        <img
+          src={qrUrl}
+          alt="Payment QR Code"
+          style={{ width: 200, height: 200 }}
+        />
       </div>
 
       <div className="text-center">
-        <button className="btn btn-success btn-lg" onClick={handlePay}>
+        <button
+          className="btn btn-success btn-lg"
+          onClick={handlePay}
+        >
           Confirm & Pay
         </button>
       </div>

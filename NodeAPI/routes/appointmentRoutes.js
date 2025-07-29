@@ -9,7 +9,8 @@ const {
   rejectAppointment,
   payAppointment,
   getVaccinatedAppointments,
-  getUserDoseCounts
+  getUserDoseCounts,
+  notifyAppointment
 } = require('../controllers/appointmentController');
 
 const router = express.Router();
@@ -29,6 +30,7 @@ router.get('/dosages', getUserDoseCounts);
 router.put('/:id/approve', adminGuard, approveAppointment);
 router.put('/:id/reject',  adminGuard, rejectAppointment);
 
+
 // ——— User routes ———
 router.post('/',          createAppointment);
 router.get('/mine',       getUserAppointments);
@@ -36,5 +38,6 @@ router.get('/mine',       getUserAppointments);
 // ——— Single & pay routes ———
 router.get('/:id',        getAppointmentById);
 router.put('/:id/pay',    payAppointment);
+router.post('/:id/notify', notifyAppointment);
 
 module.exports = router;
